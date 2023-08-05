@@ -8,7 +8,7 @@
       v-show="showSearch"
       label-width="82px"
     >
-      <el-form-item
+      <!-- <el-form-item
         label="学校名称（根据学校id显示查询【仅管理员可见】）"
         prop="studentNo"
       >
@@ -44,7 +44,7 @@
       <el-form-item label="课程id(预留名称列表)" prop="courseWorkId">
         <el-input
           v-model="queryParams.courseWorkId"
-          placeholder="请输入课程id"
+          placeholder="请输入课程名称"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -52,7 +52,7 @@
       <el-form-item label="课程作业id(预留名称列表)" prop="courseWorkId">
         <el-input
           v-model="queryParams.courseWorkId"
-          placeholder="请输入课程作业id"
+          placeholder="请输入课程作业名称"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -64,7 +64,7 @@
           clearable
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="完成状态" prop="finishStatus">
         <el-select
           v-model="queryParams.finishStatus"
@@ -95,14 +95,6 @@
           />
         </el-select>
       </el-form-item>
-      <!-- <el-form-item label="作业分数" prop="workScore">
-        <el-input
-          v-model="queryParams.workScore"
-          placeholder="请输入作业分数"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item> -->
       <el-form-item>
         <el-button
           type="primary"
@@ -176,11 +168,11 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <!-- <el-table-column label="学生id" align="center" prop="studentId" /> -->
       <el-table-column label="学生作业id" align="center" prop="id" />
-      <el-table-column label="课程id" align="center" prop="id" />
+      <el-table-column label="课程id" align="center" prop="courseId" />
       <el-table-column label="课程作业id" align="center" prop="courseWorkId" />
-      <el-table-column label="任课教师id" align="center" prop="courseWorkId" />
+      <el-table-column label="任课教师id" align="center" prop="teacherId" />
+      <el-table-column label="学生id" align="center" prop="studentId" />
       <el-table-column label="视频地址" align="center" prop="workVideo">
         <template slot-scope="scope">
           <video
@@ -278,17 +270,38 @@
     <!-- 添加或修改学生作业记录对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="90px">
-        <!-- <el-form-item label="学生id" prop="studentId">
+        <el-form-item v-if="form.id" label="学生作业id" prop="courseWorkId">
           <el-input
-            v-model="form.studentId"
-            placeholder="请输入学生id"
+            v-model="form.id"
+            placeholder="请输入学生作业id"
             :disabled="title == '添加学生作业记录' ? false : true"
           />
-        </el-form-item> -->
+        </el-form-item>
+        <el-form-item label="课程id" prop="courseId">
+          <el-input
+            v-model="form.courseId"
+            placeholder="请输入课程id"
+            :disabled="title == '添加学生作业记录' ? false : true"
+          />
+        </el-form-item>
         <el-form-item label="课程作业id" prop="courseWorkId">
           <el-input
             v-model="form.courseWorkId"
             placeholder="请输入课程作业id"
+            :disabled="title == '添加学生作业记录' ? false : true"
+          />
+        </el-form-item>
+        <el-form-item label="任课教师id" prop="teacherId">
+          <el-input
+            v-model="form.teacherId"
+            placeholder="请输入任课教师id"
+            :disabled="title == '添加学生作业记录' ? false : true"
+          />
+        </el-form-item>
+        <el-form-item label="学生id" prop="studentId">
+          <el-input
+            v-model="form.studentId"
+            placeholder="请输入学生id"
             :disabled="title == '添加学生作业记录' ? false : true"
           />
         </el-form-item>
@@ -356,7 +369,7 @@
           >
           </el-date-picker>
         </el-form-item> -->
-        <!-- <el-form-item label="完成状态" prop="finishStatus">
+        <el-form-item label="完成状态" prop="finishStatus">
           <el-select
             v-model="form.finishStatus"
             placeholder="完成状态"
@@ -387,7 +400,7 @@
               :value="dict.value"
             />
           </el-select>
-        </el-form-item> -->
+        </el-form-item>
         <!-- <el-form-item label="类型" prop="type">
           <el-input v-model="form.type" placeholder="请输入类型" />
         </el-form-item> -->
@@ -524,7 +537,9 @@ export default {
         finishStatus: '0',
         identificationStatus: '0',
         type: null,
-        allTime: null
+        allTime: null,
+        teacherId: null,
+        courseId: null
       }
       this.resetForm('form')
     },

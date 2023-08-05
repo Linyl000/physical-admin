@@ -351,7 +351,7 @@
                 v-model="form.deptId"
                 :options="deptOptions"
                 :show-count="true"
-                placeholder="请选择归属学院"
+                placeholder="老师选学校，学生选学院"
               />
             </el-form-item>
           </el-col>
@@ -609,7 +609,7 @@ export default {
         phonenumber: undefined,
         status: undefined,
         deptId: undefined,
-        roleId: ''
+        roleId: undefined
       },
       // 列信息
       columns: [
@@ -836,8 +836,8 @@ export default {
         this.form = response.data
         // this.postOptions = response.posts
         // this.roleOptions = response.roles
-        this.$set(this.form, 'postIds', response.postIds[0])
-        this.$set(this.form, 'roleIds', response.roleIds[0])
+        this.$set(this.form, 'postIds', response.postIds)
+        this.$set(this.form, 'roleIds', response.roleIds)
         this.open = true
         this.title = '修改用户'
         this.form.password = ''
