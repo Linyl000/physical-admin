@@ -8,18 +8,59 @@
       v-show="showSearch"
       label-width="82px"
     >
-      <el-form-item label="学生id" prop="studentId">
+      <el-form-item
+        label="学校名称（根据学校id显示查询【仅管理员可见】）"
+        prop="studentNo"
+      >
         <el-input
-          v-model="queryParams.studentId"
-          placeholder="请输入学生id"
+          v-model="queryParams.studentNo"
+          placeholder="请输入学校名称"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="课程作业id" prop="courseWorkId">
+      <el-form-item
+        label="学院名称（查询学校后根据学院id显示查询）"
+        prop="studentNo"
+      >
+        <el-input
+          v-model="queryParams.studentNo"
+          placeholder="请输入学院名称"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item
+        label="任课教师（查询学院后根据老师id显示查询）"
+        prop="studentNo"
+      >
+        <el-input
+          v-model="queryParams.studentNo"
+          placeholder="请输入任课教师名称"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="课程id(预留名称列表)" prop="courseWorkId">
+        <el-input
+          v-model="queryParams.courseWorkId"
+          placeholder="请输入课程id"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="课程作业id(预留名称列表)" prop="courseWorkId">
         <el-input
           v-model="queryParams.courseWorkId"
           placeholder="请输入课程作业id"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="学生学号" prop="studentNo">
+        <el-input
+          v-model="queryParams.studentNo"
+          placeholder="请输入学生学号"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -54,15 +95,14 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="作业分数" prop="workScore">
+      <!-- <el-form-item label="作业分数" prop="workScore">
         <el-input
           v-model="queryParams.workScore"
           placeholder="请输入作业分数"
           clearable
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
-
+      </el-form-item> -->
       <el-form-item>
         <el-button
           type="primary"
@@ -136,9 +176,11 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="学生id" align="center" prop="studentId" />
+      <!-- <el-table-column label="学生id" align="center" prop="studentId" /> -->
       <el-table-column label="学生作业id" align="center" prop="id" />
+      <el-table-column label="课程id" align="center" prop="id" />
       <el-table-column label="课程作业id" align="center" prop="courseWorkId" />
+      <el-table-column label="任课教师id" align="center" prop="courseWorkId" />
       <el-table-column label="视频地址" align="center" prop="workVideo">
         <template slot-scope="scope">
           <video
@@ -236,13 +278,13 @@
     <!-- 添加或修改学生作业记录对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="90px">
-        <el-form-item label="学生id" prop="studentId">
+        <!-- <el-form-item label="学生id" prop="studentId">
           <el-input
             v-model="form.studentId"
             placeholder="请输入学生id"
             :disabled="title == '添加学生作业记录' ? false : true"
           />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="课程作业id" prop="courseWorkId">
           <el-input
             v-model="form.courseWorkId"
@@ -253,6 +295,7 @@
         <el-form-item label="作业视频" prop="workVideo">
           <div style="display: flex">
             <video
+              v-if="form.workVideo"
               :src="form.workVideo"
               width="80%"
               height="auto"
@@ -399,7 +442,7 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        studentId: '',
+        studentNo: '',
         finishStatus: '',
         identificationStatus: '',
         courseWorkId: ''

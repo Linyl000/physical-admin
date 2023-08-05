@@ -187,31 +187,17 @@
             prop="userId"
             v-if="columns[0].visible"
           /> -->
-          <el-table-column
-            label="教师/学生编号"
-            align="center"
-            key="studentNo"
-            prop="studentNo"
-            width="120"
-          />
-          <el-table-column
-            label="用户名称"
-            align="center"
-            key="userName"
-            prop="userName"
-            v-if="columns[1].visible"
-            :show-overflow-tooltip="true"
-          />
-          <el-table-column
+
+          <!-- <el-table-column
             label="用户昵称"
             align="center"
             key="nickName"
             prop="nickName"
             v-if="columns[2].visible"
             :show-overflow-tooltip="true"
-          />
+          /> -->
           <el-table-column
-            label="学院"
+            label="学校/学院"
             align="center"
             key="deptName"
             prop="dept.deptName"
@@ -229,6 +215,29 @@
               <span>{{ getRoleName(scope.row.roleId) }}</span>
             </template>
           </el-table-column>
+          <el-table-column
+            label="专业(仅学生)"
+            align="center"
+            key="postId"
+            prop="postId"
+            width="120"
+          >
+          </el-table-column>
+          <el-table-column
+            label="校内编号"
+            align="center"
+            key="studentNo"
+            prop="studentNo"
+            width="120"
+          />
+          <el-table-column
+            label="用户名称"
+            align="center"
+            key="userName"
+            prop="userName"
+            v-if="columns[1].visible"
+            :show-overflow-tooltip="true"
+          />
           <el-table-column
             label="手机号码"
             align="center"
@@ -327,7 +336,7 @@
     <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-row>
-          <el-col :span="12">
+          <!-- <el-col :span="12">
             <el-form-item label="用户昵称" prop="nickName">
               <el-input
                 v-model="form.nickName"
@@ -335,7 +344,7 @@
                 maxlength="30"
               />
             </el-form-item>
-          </el-col>
+          </el-col> -->
           <el-col :span="12">
             <el-form-item label="归属学院" prop="deptId">
               <treeselect
@@ -344,6 +353,19 @@
                 :show-count="true"
                 placeholder="请选择归属学院"
               />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="专业" prop="postIds">
+              <el-select v-model="form.postIds" placeholder="请选择专业(学生)">
+                <el-option
+                  v-for="item in postOptions"
+                  :key="item.postId"
+                  :label="item.postName"
+                  :value="item.postId"
+                  :disabled="item.status == 1"
+                ></el-option>
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -424,19 +446,13 @@
           </el-col>
         </el-row>
         <el-row>
-          <!-- <el-col :span="12">
-            <el-form-item label="岗位" prop="postIds">
-              <el-select v-model="form.postIds" placeholder="请选择岗位">
-                <el-option
-                  v-for="item in postOptions"
-                  :key="item.postId"
-                  :label="item.postName"
-                  :value="item.postId"
-                  :disabled="item.status == 1"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col> -->
+          <el-col :span="12">
+            <el-form-item label="校内编号" prop="studentNo">
+              <el-input
+                v-model="form.studentNo"
+                placeholder="请输入教师编号或学生学号"
+              ></el-input> </el-form-item
+          ></el-col>
           <el-col :span="12">
             <el-form-item label="角色身份" prop="roleIds">
               <el-select v-model="form.roleIds" placeholder="请选择角色身份">
@@ -616,9 +632,9 @@ export default {
             trigger: 'blur'
           }
         ],
-        nickName: [
-          { required: true, message: '用户昵称不能为空', trigger: 'blur' }
-        ],
+        // nickName: [
+        //   { required: true, message: '用户昵称不能为空', trigger: 'blur' }
+        // ],
         password: [
           { required: true, message: '用户密码不能为空', trigger: 'blur' },
           {
@@ -639,7 +655,14 @@ export default {
           {
             required: true,
             // type: 'email',
-            message: '请选择归属学院',
+            message: '请选择专业(学生)',
+            trigger: ['blur', 'change']
+          }
+        ],
+        studentNo: [
+          {
+            required: true,
+            message: '请输入教师编号或学生学号',
             trigger: ['blur', 'change']
           }
         ],
@@ -656,7 +679,7 @@ export default {
             required: true,
             // type: 'email',
             message: '请选择角色',
-            trigger: ['blur', 'change']
+            trigger: ['blur']
           }
         ],
         phonenumber: [
@@ -750,7 +773,8 @@ export default {
         status: '0',
         remark: undefined,
         postIds: [],
-        roleIds: []
+        roleIds: [],
+        studentNo: ''
       }
       this.resetForm('form')
     },
