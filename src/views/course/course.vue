@@ -383,51 +383,51 @@ export default {
     //查看课程章节
     handleGoSection(row) {
       this.router.push({ name: 'section', params: { courseId: row.id } })
-    }
-  },
-  /** 提交按钮 */
-  submitForm() {
-    this.$refs['form'].validate((valid) => {
-      if (valid) {
-        if (this.form.id != null) {
-          updateCourse(this.form).then((response) => {
-            this.$modal.msgSuccess('修改成功')
-            this.open = false
-            this.getList()
-          })
-        } else {
-          addCourse(this.form).then((response) => {
-            this.$modal.msgSuccess('新增成功')
-            this.open = false
-            this.getList()
-          })
+    },
+    /** 提交按钮 */
+    submitForm() {
+      this.$refs['form'].validate((valid) => {
+        if (valid) {
+          if (this.form.id != null) {
+            updateCourse(this.form).then((response) => {
+              this.$modal.msgSuccess('修改成功')
+              this.open = false
+              this.getList()
+            })
+          } else {
+            addCourse(this.form).then((response) => {
+              this.$modal.msgSuccess('新增成功')
+              this.open = false
+              this.getList()
+            })
+          }
         }
-      }
-    })
-  },
-  /** 删除按钮操作 */
-  handleDelete(row) {
-    const ids = row.id || this.ids
-    this.$modal
-      .confirm('是否确认删除课程编号为"' + ids + '"的数据项？')
-      .then(function () {
-        return delCourse(ids)
       })
-      .then(() => {
-        this.getList()
-        this.$modal.msgSuccess('删除成功')
-      })
-      .catch(() => {})
-  },
-  /** 导出按钮操作 */
-  handleExport() {
-    this.download(
-      'course/course/export',
-      {
-        ...this.queryParams
-      },
-      `course_${new Date().getTime()}.xlsx`
-    )
+    },
+    /** 删除按钮操作 */
+    handleDelete(row) {
+      const ids = row.id || this.ids
+      this.$modal
+        .confirm('是否确认删除课程编号为"' + ids + '"的数据项？')
+        .then(function () {
+          return delCourse(ids)
+        })
+        .then(() => {
+          this.getList()
+          this.$modal.msgSuccess('删除成功')
+        })
+        .catch(() => {})
+    },
+    /** 导出按钮操作 */
+    handleExport() {
+      this.download(
+        'course/course/export',
+        {
+          ...this.queryParams
+        },
+        `course_${new Date().getTime()}.xlsx`
+      )
+    }
   }
 }
 </script>
