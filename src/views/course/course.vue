@@ -24,14 +24,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="课程介绍" prop="courseIntroduce">
-        <el-input
-          v-model="queryParams.courseIntroduce"
-          placeholder="请输入课程介绍"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+
       <el-form-item label="学院id" prop="classId">
         <el-input
           v-model="queryParams.classId"
@@ -113,10 +106,10 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="学院id" align="center" prop="classId" />
-      <el-table-column label="教师id" align="center" prop="teacherId" />
       <el-table-column label="课程id" align="center" prop="id" />
       <el-table-column label="课程名称" align="center" prop="courseName" />
+      <el-table-column label="学院id" align="center" prop="classId" />
+      <el-table-column label="教师id" align="center" prop="teacherId" />
       <el-table-column label="课程介绍" align="center" prop="courseIntroduce" />
       <el-table-column label="课程视频" align="center" prop="courseVideo">
         <template slot-scope="scope">
