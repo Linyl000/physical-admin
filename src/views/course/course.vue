@@ -8,6 +8,22 @@
       v-show="showSearch"
       label-width="68px"
     >
+      <el-form-item label="学校名称" prop="schoolName">
+        <el-input
+          v-model="queryParams.schoolName"
+          placeholder="请输入学校名称"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="课程编号" prop="courseNo">
+        <el-input
+          v-model="queryParams.courseNo"
+          placeholder="请输入课程编号"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
       <el-form-item label="课程名称" prop="courseName">
         <el-input
           v-model="queryParams.courseName"
@@ -16,19 +32,10 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="教师id" prop="teacherId">
+      <el-form-item label="教师名称" prop="teacherName">
         <el-input
-          v-model="queryParams.teacherId"
-          placeholder="请输入教师id"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-
-      <el-form-item label="学院id" prop="classId">
-        <el-input
-          v-model="queryParams.classId"
-          placeholder="请输入学院id"
+          v-model="queryParams.teacherName"
+          placeholder="请输入教师名称"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -106,10 +113,11 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="课程id" align="center" prop="id" />
+      <!-- <el-table-column label="课程id" align="center" prop="courseId" /> -->
+      <el-table-column label="课程编号" align="center" prop="courseNo" />
       <el-table-column label="课程名称" align="center" prop="courseName" />
-      <el-table-column label="学院id" align="center" prop="classId" />
-      <el-table-column label="教师id" align="center" prop="teacherId" />
+      <el-table-column label="所属学校" align="center" prop="schoolName" />
+      <el-table-column label="任课教师" align="center" prop="teacherName" />
       <el-table-column label="课程介绍" align="center" prop="courseIntroduce" />
       <el-table-column label="课程视频" align="center" prop="courseVideo">
         <template slot-scope="scope">
@@ -166,11 +174,19 @@
     <!-- 添加或修改课程对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="课程编号" prop="courseNo">
+          <el-input v-model="form.courseNo" placeholder="请输入课程编号" />
+        </el-form-item>
         <el-form-item label="课程名称" prop="courseName">
           <el-input v-model="form.courseName" placeholder="请输入课程名称" />
         </el-form-item>
-        <el-form-item label="教师id" prop="teacherId">
-          <el-input v-model="form.teacherId" placeholder="请输入教师id" />
+        <el-form-item label="所属学校" prop="schoolName">
+          <!-- <el-input v-model="form.schoolName" placeholder="请输入课程名称" /> -->
+          111
+        </el-form-item>
+        <el-form-item label="教师名称" prop="teacherName">
+          <!-- <el-input v-model="form.teacherName" placeholder="请输入教师id" /> -->
+          1111
         </el-form-item>
         <el-form-item label="课程介绍" prop="courseIntroduce">
           <el-input
@@ -179,9 +195,6 @@
             v-model="form.courseIntroduce"
             placeholder="请输入课程介绍"
           />
-        </el-form-item>
-        <el-form-item label="学院id" prop="classId">
-          <el-input v-model="form.classId" placeholder="请输入学院id" />
         </el-form-item>
         <el-form-item label="课程视频" prop="courseVideo">
           <div style="display: flex">
@@ -244,8 +257,7 @@ import {
   getCourse,
   delCourse,
   addCourse,
-  updateCourse,
-  listTeacher
+  updateCourse
 } from '@/api/course/course'
 import service from '@/utils/request.js'
 import { getToken } from '@/utils/auth'
@@ -276,12 +288,10 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
+        schoolName: null,
+        courseNo: null,
         courseName: null,
-        teacherId: null,
-        courseIntroduce: null,
-        classId: null,
-        courseVideo: null,
-        courseJson: null
+        teacherName: null
       },
       // 表单参数
       form: {},
@@ -373,7 +383,7 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset()
-      const id = row.id || this.ids
+      const id = row.courseId || this.ids
       getCourse(id).then((response) => {
         this.form = response.data
         this.open = true

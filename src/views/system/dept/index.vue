@@ -7,10 +7,10 @@
       :inline="true"
       v-show="showSearch"
     >
-      <el-form-item label="学院名称" prop="deptName">
+      <el-form-item label="学校/学院名称" prop="deptName">
         <el-input
           v-model="queryParams.deptName"
-          placeholder="请输入学院名称"
+          placeholder="请输入学校/学院名称"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -81,7 +81,7 @@
     >
       <el-table-column
         prop="deptName"
-        label="部门名称"
+        label="院校名称"
         width="260"
       ></el-table-column>
       <el-table-column
@@ -114,6 +114,7 @@
       >
         <template slot-scope="scope">
           <el-button
+            v-if="scope.row.level !== 0"
             size="mini"
             type="text"
             icon="el-icon-edit"
@@ -122,6 +123,7 @@
             >修改</el-button
           >
           <el-button
+            v-if="scope.row.level !== 2"
             size="mini"
             type="text"
             icon="el-icon-plus"
@@ -146,6 +148,18 @@
     <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-row>
+          <el-form-item label="类型" v-if="form.parentId !== 0">
+            <el-radio-group v-model="form.type">
+              <el-radio
+                v-for="dict in typeList"
+                :key="dict.value"
+                :label="dict.value"
+                >{{ dict.label }}</el-radio
+              >
+            </el-radio-group>
+          </el-form-item>
+        </el-row>
+        <el-row>
           <el-col :span="24" v-if="form.parentId !== 0">
             <el-form-item label="上级部门" prop="parentId">
               <treeselect
@@ -153,14 +167,15 @@
                 :options="deptOptions"
                 :normalizer="normalizer"
                 placeholder="选择上级部门"
+                @input="getLeaderList"
               />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="部门名称" prop="deptName">
-              <el-input v-model="form.deptName" placeholder="请输入部门名称" />
+            <el-form-item label="院校名称" prop="deptName">
+              <el-input v-model="form.deptName" placeholder="请输入院校名称" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -176,21 +191,16 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="负责人" prop="leader">
-              <!-- <el-input
-                v-model="form.leader"
-                placeholder="请输入负责人"
-                maxlength="20"
-              /> -->
               <el-select
                 v-model="form.leader"
                 filterable
-                placeholder="请选择负责人"
+                placeholder="只有学院有负责人"
               >
                 <el-option
                   v-for="dict in leaderList"
-                  :key="dict.value"
-                  :label="dict.label"
-                  :value="dict.value"
+                  :key="dict.leader"
+                  :label="dict.userName"
+                  :value="dict.leader"
                 ></el-option>
               </el-select>
             </el-form-item>
@@ -199,14 +209,14 @@
             <el-form-item label="联系电话" prop="phone">
               <el-input
                 v-model="form.phone"
-                placeholder="请输入联系电话"
+                placeholder="负责人联系电话"
                 maxlength="11"
               />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="12">
+          <!-- <el-col :span="12">
             <el-form-item label="邮箱" prop="email">
               <el-input
                 v-model="form.email"
@@ -214,9 +224,9 @@
                 maxlength="50"
               />
             </el-form-item>
-          </el-col>
+          </el-col> -->
           <el-col :span="12">
-            <el-form-item label="部门状态">
+            <el-form-item label="状态">
               <el-radio-group v-model="form.status">
                 <el-radio
                   v-for="dict in dict.type.sys_normal_disable"
@@ -246,6 +256,7 @@ import {
   updateDept,
   listDeptExcludeChild
 } from '@/api/system/dept'
+import { listTeacher } from '@/api/course/course'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
@@ -277,22 +288,33 @@ export default {
         status: undefined
       },
       leaderList: [],
+
       // 表单参数
       form: {},
+      typeList: [
+        {
+          value: 0,
+          label: '学校'
+        },
+        {
+          value: 1,
+          label: '学院'
+        }
+      ],
       // 表单校验
       rules: {
         parentId: [
           { required: true, message: '上级部门不能为空', trigger: 'blur' }
         ],
         deptName: [
-          { required: true, message: '部门名称不能为空', trigger: 'blur' }
+          { required: true, message: '院校名称不能为空', trigger: 'blur' }
         ],
         orderNum: [
           { required: true, message: '显示排序不能为空', trigger: 'blur' }
         ],
-        leader: [
-          { required: true, message: '负责人不能为空', trigger: 'blur' }
-        ],
+        // leader: [
+        //   { required: true, message: '负责人不能为空', trigger: 'blur' }
+        // ],
         email: [
           {
             type: 'email',
@@ -307,22 +329,55 @@ export default {
             trigger: 'blur'
           }
         ]
-      }
+      },
+      teacherList: []
     }
   },
   created() {
     this.getList()
-    this.getLeaderList()
   },
   methods: {
     getLeaderList() {
-      //
+      console.log(this.form.parentId)
+      console.log(this.deptOptions)
+      let res1 = this.findDeptById(this.deptOptions, this.form.parentId)
+      if (res1.deptName) {
+        listTeacher({ deptName: res1.deptName }).then((res) => {
+          this.leaderList = res.data.map((item) => {
+            return { ...item, leader: item.userId }
+          })
+        })
+      }
+    },
+    //找到上级名称
+    findDeptById(deptOptions, targetId) {
+      for (let i = 0; i < deptOptions.length; i++) {
+        const dept = deptOptions[i]
+        if (dept.deptId === targetId) {
+          return dept
+        }
+        if (dept.children && dept.children.length > 0) {
+          const result = this.findDeptById(dept.children, targetId)
+          if (result) {
+            return result
+          }
+        }
+      }
+      return null
     },
     /** 查询部门列表 */
     getList() {
       this.loading = true
       listDept(this.queryParams).then((response) => {
-        this.deptList = this.handleTree(response.data, 'deptId')
+        const newData = response.data.map((item) => {
+          // 创建新的对象，复制原有属性，并添加 level 属性
+          return {
+            ...item,
+            level: item.ancestors ? item.ancestors.split(',').length - 1 : 0
+          }
+        })
+
+        this.deptList = this.handleTree(newData, 'deptId')
         this.loading = false
       })
     },
@@ -352,7 +407,8 @@ export default {
         leader: undefined,
         phone: undefined,
         email: undefined,
-        status: '0'
+        status: '0',
+        type: 0
       }
       this.resetForm('form')
     },
@@ -370,9 +426,10 @@ export default {
       this.reset()
       if (row != undefined) {
         this.form.parentId = row.deptId
+        this.getLeaderList()
       }
       this.open = true
-      this.title = '添加学院'
+      this.title = '添加院校'
       listDept().then((response) => {
         this.deptOptions = this.handleTree(response.data, 'deptId')
       })
@@ -391,11 +448,13 @@ export default {
       getDept(row.deptId).then((response) => {
         this.form = response.data
         this.open = true
-        this.title = '修改学院'
+        this.title = '修改院校'
         listDeptExcludeChild(row.deptId).then((response) => {
           this.deptOptions = this.handleTree(response.data, 'deptId')
+
           if (this.deptOptions.length == 0) {
             const noResultsOptions = {
+              type: this.form.type,
               deptId: this.form.parentId,
               deptName: this.form.parentName,
               children: []

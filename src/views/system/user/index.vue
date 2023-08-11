@@ -37,9 +37,9 @@
           v-show="showSearch"
           label-width="68px"
         >
-          <el-form-item label="角色身份" prop="roleIds">
+          <el-form-item label="角色身份" prop="roleId">
             <el-select
-              v-model="queryParams.roleIds"
+              v-model="queryParams.roleId"
               placeholder="请选择角色身份"
             >
               <el-option
@@ -51,10 +51,10 @@
               ></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="用户名称" prop="userName">
+          <el-form-item label="姓名" prop="userName">
             <el-input
               v-model="queryParams.userName"
-              placeholder="请输入用户名称"
+              placeholder="请输入姓名"
               clearable
               style="width: 240px"
               @keyup.enter.native="handleQuery"
@@ -224,14 +224,14 @@
           >
           </el-table-column>
           <el-table-column
-            label="校内编号"
+            label="教师号/学号"
             align="center"
             key="studentNo"
             prop="studentNo"
             width="120"
           />
           <el-table-column
-            label="用户名称"
+            label="姓名"
             align="center"
             key="userName"
             prop="userName"
@@ -333,8 +333,8 @@
     </el-row>
 
     <!-- 添加或修改用户配置对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+    <el-dialog :title="title" :visible.sync="open" width="700px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-row>
           <!-- <el-col :span="12">
             <el-form-item label="用户昵称" prop="nickName">
@@ -346,7 +346,7 @@
             </el-form-item>
           </el-col> -->
           <el-col :span="12">
-            <el-form-item label="归属学院" prop="deptId">
+            <el-form-item label="学校/学院" prop="deptId">
               <treeselect
                 v-model="form.deptId"
                 :options="deptOptions"
@@ -379,42 +379,34 @@
               />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <!-- <el-col :span="12">
             <el-form-item label="邮箱" prop="email">
               <el-input
                 v-model="form.email"
                 placeholder="请输入邮箱"
                 maxlength="50"
               />
-            </el-form-item>
-          </el-col>
+            </el-form-item> 
+          </el-col>-->
         </el-row>
         <el-row>
           <el-col :span="12">
+            <el-form-item label="教师号/学号" prop="studentNo">
+              <el-input
+                v-model="form.studentNo"
+                placeholder="请输入教师编号或学生学号"
+              ></el-input> </el-form-item
+          ></el-col>
+          <el-col :span="12">
             <el-form-item
               v-if="form.userId == undefined"
-              label="用户名称"
+              label="姓名"
               prop="userName"
             >
               <el-input
                 v-model="form.userName"
-                placeholder="请输入用户名称"
+                placeholder="请输入姓名"
                 maxlength="30"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item
-              v-if="form.userId == undefined"
-              label="用户密码"
-              prop="password"
-            >
-              <el-input
-                v-model="form.password"
-                placeholder="请输入用户密码"
-                type="password"
-                maxlength="20"
-                show-password
               />
             </el-form-item>
           </el-col>
@@ -447,13 +439,6 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="校内编号" prop="studentNo">
-              <el-input
-                v-model="form.studentNo"
-                placeholder="请输入教师编号或学生学号"
-              ></el-input> </el-form-item
-          ></el-col>
-          <el-col :span="12">
             <el-form-item label="角色身份" prop="roleIds">
               <el-select v-model="form.roleIds" placeholder="请选择角色身份">
                 <el-option
@@ -464,6 +449,21 @@
                   :disabled="item.status == 1"
                 ></el-option>
               </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item
+              v-if="form.userId == undefined"
+              label="用户密码"
+              prop="password"
+            >
+              <el-input
+                v-model="form.password"
+                placeholder="请输入用户密码"
+                type="password"
+                maxlength="20"
+                show-password
+              />
             </el-form-item>
           </el-col>
         </el-row>
@@ -614,7 +614,7 @@ export default {
       // 列信息
       columns: [
         { key: 0, label: `用户编号`, visible: true },
-        { key: 1, label: `用户名称`, visible: true },
+        { key: 1, label: `姓名`, visible: true },
         { key: 2, label: `用户昵称`, visible: true },
         { key: 3, label: `学院`, visible: true },
         { key: 4, label: `手机号码`, visible: true },
@@ -624,11 +624,11 @@ export default {
       // 表单校验
       rules: {
         userName: [
-          { required: true, message: '用户名称不能为空', trigger: 'blur' },
+          { required: true, message: '姓名不能为空', trigger: 'blur' },
           {
             min: 2,
-            max: 20,
-            message: '用户名称长度必须介于 2 和 20 之间',
+            max: 5,
+            message: '姓名长度必须介于 2 和 5 之间',
             trigger: 'blur'
           }
         ],
@@ -644,13 +644,13 @@ export default {
             trigger: 'blur'
           }
         ],
-        email: [
-          {
-            type: 'email',
-            message: '请输入正确的邮箱地址',
-            trigger: ['blur', 'change']
-          }
-        ],
+        // email: [
+        //   {
+        //     type: 'email',
+        //     message: '请输入正确的邮箱地址',
+        //     trigger: ['blur', 'change']
+        //   }
+        // ],
         deptId: [
           {
             required: true,
