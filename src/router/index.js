@@ -87,6 +87,20 @@ export const constantRoutes = [
         meta: { title: '个人中心', icon: 'user' }
       }
     ]
+  },
+  {
+    path: '/section',
+    component: Layout,
+    hidden: true,
+    redirect: 'noredirect',
+    children: [
+      {
+        path: 'section',
+        component: () => import('@/views/course/section/section.vue'),
+        name: 'section',
+        meta: { title: '个人中心', icon: 'user' }
+      }
+    ]
   }
 ]
 

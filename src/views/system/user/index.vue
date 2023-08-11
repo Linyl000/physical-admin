@@ -352,17 +352,18 @@
                 :options="deptOptions"
                 :show-count="true"
                 placeholder="老师选学校，学生选学院"
+                @input="listStudy"
               />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="专业" prop="postIds">
-              <el-select v-model="form.postIds" placeholder="请选择专业(学生)">
+            <el-form-item label="专业" prop="studyId">
+              <el-select v-model="form.studyId" placeholder="请选择专业(学生)">
                 <el-option
                   v-for="item in postOptions"
-                  :key="item.postId"
-                  :label="item.postName"
-                  :value="item.postId"
+                  :key="item.studyId"
+                  :label="item.studyName"
+                  :value="item.studyId"
                   :disabled="item.status == 1"
                 ></el-option>
               </el-select>
@@ -540,6 +541,7 @@ import {
   changeUserStatus,
   deptTreeSelect
 } from '@/api/system/user'
+import { listStudy } from '@/api/system/profession.js'
 import { getToken } from '@/utils/auth'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
@@ -813,8 +815,17 @@ export default {
     //直接获取角色/岗位
     getRolesAndPosts() {
       getUser().then((response) => {
-        this.postOptions = response.posts
+        // this.postOptions = response.posts
         this.roleOptions = response.roles
+      })
+    },
+    //获取学生专业
+    listStudy() {
+      listStudy({ deptId: this.form.deptId }).then((res) => {
+        this.postOptions = res.rows.map((item) => {
+          return { ...item, studyId: item.studyId }
+        })
+        console.log(this.postOptions)
       })
     },
     /** 新增按钮操作 */

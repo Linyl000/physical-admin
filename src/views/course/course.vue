@@ -8,14 +8,6 @@
       v-show="showSearch"
       label-width="68px"
     >
-      <el-form-item label="学校名称" prop="schoolName">
-        <el-input
-          v-model="queryParams.schoolName"
-          placeholder="请输入学校名称"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
       <el-form-item label="课程编号" prop="courseNo">
         <el-input
           v-model="queryParams.courseNo"
@@ -28,6 +20,14 @@
         <el-input
           v-model="queryParams.courseName"
           placeholder="请输入课程名称"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="所属学校" prop="schoolName">
+        <el-input
+          v-model="queryParams.schoolName"
+          placeholder="请输入所属学校"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -180,13 +180,34 @@
         <el-form-item label="课程名称" prop="courseName">
           <el-input v-model="form.courseName" placeholder="请输入课程名称" />
         </el-form-item>
-        <el-form-item label="所属学校" prop="schoolName">
-          <!-- <el-input v-model="form.schoolName" placeholder="请输入课程名称" /> -->
-          111
+        <el-form-item label="学校名称" prop="schoolId">
+          <el-select
+            v-model="form.schoolId"
+            filterable
+            placeholder="选择课程所属学校"
+            @change="listTeacher"
+          >
+            <el-option
+              v-for="dict in schoolList"
+              :key="dict.schoolId"
+              :label="dict.deptName"
+              :value="dict.schoolId"
+            ></el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="教师名称" prop="teacherName">
-          <!-- <el-input v-model="form.teacherName" placeholder="请输入教师id" /> -->
-          1111
+        <el-form-item label="教师名称" prop="teacherId">
+          <el-select
+            v-model="form.teacherId"
+            filterable
+            placeholder="选择课程教师"
+          >
+            <el-option
+              v-for="dict in teacherList"
+              :key="dict.teacherId"
+              :label="dict.userName"
+              :value="dict.teacherId"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="课程介绍" prop="courseIntroduce">
           <el-input
@@ -257,7 +278,9 @@ import {
   getCourse,
   delCourse,
   addCourse,
-  updateCourse
+  updateCourse,
+  listSchool,
+  listTeacher
 } from '@/api/course/course'
 import service from '@/utils/request.js'
 import { getToken } from '@/utils/auth'
@@ -296,16 +319,61 @@ export default {
       // 表单参数
       form: {},
       // 表单校验
-      rules: {},
+      rules: {
+        courseNo: [
+          { required: true, message: '课程编号不能为空', trigger: 'blur' }
+        ],
+        courseName: [
+          { required: true, message: '课程名称不能为空', trigger: 'blur' }
+        ],
+        schoolId: [
+          {
+            required: true,
+            message: '学校名称不能为空',
+            trigger: ['blur', 'change']
+          }
+        ],
+        teacherId: [
+          {
+            required: true,
+            message: '教师名称不能为空',
+            trigger: ['blur', 'change']
+          }
+        ]
+      },
       uploadUrl: service.ip + '/common/upload',
       //上传额外参数
-      headers: { Authorization: 'Bearer ' + getToken() }
+      headers: { Authorization: 'Bearer ' + getToken() },
+      //学校和教师列表
+      schoolList: [],
+      teacherList: []
     }
   },
   created() {
     this.getList()
+    this.listSchool()
+    this.listTeacher()
   },
   methods: {
+    //学校
+    listSchool() {
+      listSchool().then((res) => {
+        this.schoolList = res.data.map((item) => {
+          return { ...item, schoolId: item.deptId }
+        })
+      })
+      if (this.form.schoolId) {
+        this.listTeacher()
+      }
+    },
+    //老师
+    listTeacher() {
+      listTeacher({ deptId: this.form.schoolId }).then((res) => {
+        this.teacherList = res.data.map((item) => {
+          return { ...item, teacherId: item.userId }
+        })
+      })
+    },
     //上传视频
     handleVideoSuccess(response, file) {
       // 上传视频成功后的处理逻辑
@@ -348,13 +416,13 @@ export default {
     // 表单重置
     reset() {
       this.form = {
-        id: null,
+        courseId: null,
         courseName: null,
-        teacherId: null,
-        courseIntroduce: null,
-        classId: null,
+        courseNo: null,
         courseVideo: null,
-        courseJson: null
+        schoolId: null,
+        teacherId: null,
+        courseIntroduce: null
       }
       this.resetForm('form')
     },
@@ -370,7 +438,7 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map((item) => item.id)
+      this.ids = selection.map((item) => item.courseId)
       this.single = selection.length !== 1
       this.multiple = !selection.length
     },
@@ -392,13 +460,14 @@ export default {
     },
     //查看课程章节
     handleGoSection(row) {
-      this.router.push({ name: 'section', params: { courseId: row.id } })
+      this.$router.push({ name: 'section', params: { courseId: row.courseId } })
+      // window.location.href = '/section'
     },
     /** 提交按钮 */
     submitForm() {
       this.$refs['form'].validate((valid) => {
         if (valid) {
-          if (this.form.id != null) {
+          if (this.form.courseId != null) {
             updateCourse(this.form).then((response) => {
               this.$modal.msgSuccess('修改成功')
               this.open = false
@@ -416,7 +485,7 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const ids = row.id || this.ids
+      const ids = row.courseId || this.ids
       this.$modal
         .confirm('是否确认删除课程编号为"' + ids + '"的数据项？')
         .then(function () {

@@ -190,17 +190,17 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="负责人" prop="leader">
+            <el-form-item label="负责人" prop="leaderId">
               <el-select
-                v-model="form.leader"
+                v-model="form.leaderId"
                 filterable
                 placeholder="只有学院有负责人"
               >
                 <el-option
                   v-for="dict in leaderList"
-                  :key="dict.leader"
+                  :key="dict.leaderId"
                   :label="dict.userName"
-                  :value="dict.leader"
+                  :value="dict.leaderId"
                 ></el-option>
               </el-select>
             </el-form-item>
@@ -338,13 +338,21 @@ export default {
   },
   methods: {
     getLeaderList() {
-      console.log(this.form.parentId)
-      console.log(this.deptOptions)
-      let res1 = this.findDeptById(this.deptOptions, this.form.parentId)
-      if (res1.deptName) {
-        listTeacher({ deptName: res1.deptName }).then((res) => {
+      // let res1
+      // if (this.form.parentId && this.deptOptions) {
+      //   res1 = this.findDeptById(this.deptOptions, this.form.parentId)
+      //   if (res1.deptName) {
+      //     listTeacher({ deptName: res1.deptName }).then((res) => {
+      //       this.leaderList = res.data.map((item) => {
+      //         return { ...item, leaderId: item.userId }
+      //       })
+      //     })
+      //   }
+      // }
+      if (this.form.parentId) {
+        listTeacher({ deptId: this.form.parentId }).then((res) => {
           this.leaderList = res.data.map((item) => {
-            return { ...item, leader: item.userId }
+            return { ...item, leaderId: item.userId }
           })
         })
       }
