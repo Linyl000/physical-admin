@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询课程节数列表
 export function listCourseNumWork(query) {
   return request({
-    url: '/courseNumWork/courseNumWork/list',
+    url: '/api/work/coureseTask/list',
     method: 'get',
     params: query
   })
@@ -20,7 +20,7 @@ export function getCourseNumWork(id) {
 // 新增课程节数
 export function addCourseNumWork(data) {
   return request({
-    url: '/courseNumWork/courseNumWork',
+    url: '/api/work/coureseTask',
     method: 'post',
     data: data
   })
@@ -29,7 +29,7 @@ export function addCourseNumWork(data) {
 // 修改课程节数
 export function updateCourseNumWork(data) {
   return request({
-    url: '/courseNumWork/courseNumWork',
+    url: '/api/work/coureseTask',
     method: 'put',
     data: data
   })
@@ -38,7 +38,7 @@ export function updateCourseNumWork(data) {
 // 删除课程节数
 export function delCourseNumWork(id) {
   return request({
-    url: '/courseNumWork/courseNumWork/' + id,
+    url: '/api/work/coureseTask/' + id,
     method: 'delete'
   })
 }

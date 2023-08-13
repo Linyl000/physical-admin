@@ -66,7 +66,7 @@
           >新增</el-button
         >
       </el-col>
-      <el-col :span="1.5">
+      <!-- <el-col :span="1.5">
         <el-button
           type="success"
           plain
@@ -77,7 +77,7 @@
           v-hasPermi="['course:course:edit']"
           >修改</el-button
         >
-      </el-col>
+      </el-col> -->
       <el-col :span="1.5">
         <el-button
           type="danger"
@@ -119,14 +119,12 @@
       <el-table-column label="所属学校" align="center" prop="schoolName" />
       <el-table-column label="任课教师" align="center" prop="teacherName" />
       <el-table-column label="课程介绍" align="center" prop="courseIntroduce" />
-      <el-table-column label="课程视频" align="center" prop="courseVideo">
+      <el-table-column label="课程封面" align="center" prop="courseJson">
         <template slot-scope="scope">
-          <video
-            :src="scope.row.courseVideo"
-            width="100%"
-            height="auto"
-            :controls="false"
-          ></video> </template
+          <img
+          style="display: inline-block;width: 100px;height: 100px;"
+            :src="scope.row.courseJson"
+          ></template
       ></el-table-column>
       <!-- <el-table-column label="课程Json" align="center" prop="courseJson" /> -->
       <el-table-column
@@ -172,7 +170,7 @@
     />
 
     <!-- 添加或修改课程对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open"  append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="课程编号" prop="courseNo">
           <el-input v-model="form.courseNo" placeholder="请输入课程编号" />
@@ -217,44 +215,20 @@
             placeholder="请输入课程介绍"
           />
         </el-form-item>
-        <el-form-item label="课程视频" prop="courseVideo">
-          <div style="display: flex">
-            <video
-              v-if="form.courseVideo"
-              :src="form.courseVideo"
-              width="80%"
-              height="auto"
-              :controls="true"
-              ref="videoRef"
-              @loadedmetadata="handleLoadedMetadata"
-            ></video>
-            <div
-              style="
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                width: 20%;
-              "
-            >
-              <!-- <div v-if="form.courseVideo" class="avatar-uploader" @click="bigVideo">
-                <i class="el-icon-plus avatar-uploader-icon">放大</i>
-              </div> -->
+        <el-form-item label="课程封面" prop="courseJson">
               <el-upload
                 class="avatar-uploader"
                 :action="uploadUrl"
                 :on-success="handleVideoSuccess"
-                :before-upload="beforeVideoUpload"
-                accept="video/*"
                 :limit="1"
                 :headers="headers"
-                :show-file-list="false"
+                :file-list="fileList"
+                list-type="picture"
               >
-                <i class="el-icon-refresh avatar-uploader-icon">{{
-                  form.courseVideo ? '更换' : '上传'
-                }}</i>
-              </el-upload>
-            </div>
-          </div>
+                <el-button type="primary">{{
+                  form.courseJson ? '更换' : '上传'
+                }}</el-button>
+              </el-upload>   
         </el-form-item>
         <!-- <el-form-item label="课程Json" prop="courseJson">
           <el-input
@@ -316,6 +290,7 @@ export default {
         courseName: null,
         teacherName: null
       },
+      fileList:[],
       // 表单参数
       form: {},
       // 表单校验
@@ -376,29 +351,26 @@ export default {
     },
     //上传视频
     handleVideoSuccess(response, file) {
-      // 上传视频成功后的处理逻辑
       console.log(response)
-      console.log(file)
-      this.form.courseVideo = response.url // 重置预览图片地址
+      this.form.courseJson = response.url // 重置预览图片地址
     },
-    beforeVideoUpload(file) {
-      const isVideo = file.type.startsWith('video/')
-      const isLt200M = file.size / 1024 / 1024 < 200
+    // beforeVideoUpload(file) {
+    //   const isVideo = file.type.startsWith('video/')
+    //   const isLt200M = file.size / 1024 / 1024 < 200
 
-      if (!isVideo) {
-        this.$message.error('只能上传视频文件!')
-      }
-      if (!isLt200M) {
-        this.$message.error('视频文件大小不能超过 200MB!')
-      }
+    //   if (!isVideo) {
+    //     this.$message.error('只能上传视频文件!')
+    //   }
+    //   if (!isLt200M) {
+    //     this.$message.error('视频文件大小不能超过 200MB!')
+    //   }
 
-      return isVideo && isLt200M
-    },
-    handleLoadedMetadata() {
-      const videoElement = this.$refs.videoRef
-      this.form.allTime = videoElement.duration // 视频总时长（以秒为单位）
-    },
+    //   return isVideo && isLt200M
+    // },
     bigVideo() {},
+    beforeUpload(){
+      // this.fileList>0 && (this.fileList)
+    },
     /** 查询课程列表 */
     getList() {
       this.loading = true
@@ -419,7 +391,7 @@ export default {
         courseId: null,
         courseName: null,
         courseNo: null,
-        courseVideo: null,
+        courseJson: null,
         schoolId: null,
         teacherId: null,
         courseIntroduce: null
@@ -438,7 +410,7 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map((item) => item.courseId)
+      this.ids = selection.map((item) => item.courseId).join(',')
       this.single = selection.length !== 1
       this.multiple = !selection.length
     },
@@ -460,7 +432,7 @@ export default {
     },
     //查看课程章节
     handleGoSection(row) {
-      this.$router.push({ name: 'section', params: { courseId: row.courseId } })
+      this.$router.push({ name: 'section', query: { courseId: row.courseId } })
       // window.location.href = '/section'
     },
     /** 提交按钮 */
@@ -485,9 +457,10 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const ids = row.courseId || this.ids
+      // console.log(row,'row')
+      const ids = row.courseId|| this.ids
       this.$modal
-        .confirm('是否确认删除课程编号为"' + ids + '"的数据项？')
+        .confirm('是否确认删除课程吗？')
         .then(function () {
           return delCourse(ids)
         })
