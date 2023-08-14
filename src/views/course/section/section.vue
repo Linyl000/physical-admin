@@ -248,7 +248,7 @@
             <el-option
               v-for="i in testList"
               :key="i.id"
-              :label="i.examPaperName"
+              :label="i.name"
               :value="i.id"
             ></el-option>
           </el-select>
@@ -275,7 +275,7 @@
 
 <script>
 import { listCourseNumWork, delCourseNumWork ,addCourseNumWork,updateCourseNumWork} from "@/api/course/section";
-import { coureseTaskList} from '@/api/examination/index'
+import { getExamList} from '@/api/answerFunction/emamList'
 import service from "@/utils/request.js";
 import { getToken } from "@/utils/auth";
 function deepclone(obj){
@@ -351,7 +351,7 @@ export default {
     this.form.courseVideo=r.url
     },
     getTaskList(){
-      coureseTaskList({courseId:this.courseId}).then(res=>{
+      getExamList({courseId:this.courseId}).then(res=>{
              this.testList=res.rows
       })
     },
