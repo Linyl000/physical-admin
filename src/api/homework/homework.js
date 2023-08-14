@@ -1,10 +1,9 @@
 import request from '@/utils/request'
-import { parseStrEmpty } from '@/utils/ruoyi'
 
 // 查询作业列表
 export function listStudentwork(query) {
   return request({
-    url: '/api/work/studentwork/list',
+    url: '/api/work/studentWork/list',
     method: 'get',
     params: query
   })
@@ -13,7 +12,7 @@ export function listStudentwork(query) {
 // 查询作业详细
 export function getStudentwork(userId) {
   return request({
-    url: '/api/work/studentwork/' + userId,
+    url: '/api/work/studentWork/' + userId,
     method: 'get'
   })
 }
@@ -21,7 +20,7 @@ export function getStudentwork(userId) {
 // 新增作业
 export function addStudentwork(data) {
   return request({
-    url: '/api/work/studentwork',
+    url: '/api/work/studentWork',
     method: 'post',
     data: data
   })
@@ -30,7 +29,7 @@ export function addStudentwork(data) {
 // 修改作业
 export function updateStudentwork(data) {
   return request({
-    url: '/api/work/studentwork',
+    url: '/api/work/studentWork',
     method: 'put',
     data: data
   })
@@ -39,7 +38,7 @@ export function updateStudentwork(data) {
 // 删除作业
 export function delStudentwork(userId) {
   return request({
-    url: '/api/work/studentwork/' + userId,
+    url: '/api/work/studentWork/' + userId,
     method: 'delete'
   })
 }

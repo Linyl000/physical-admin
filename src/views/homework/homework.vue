@@ -6,65 +6,57 @@
       size="small"
       :inline="true"
       v-show="showSearch"
-      label-width="82px"
+      label-width="100px"
     >
-      <!-- <el-form-item
-        label="学校名称（根据学校id显示查询【仅管理员可见】）"
-        prop="studentNo"
-      >
+      <el-form-item label="学校名称" prop="schoolName">
         <el-input
-          v-model="queryParams.studentNo"
+          v-model="queryParams.schoolName"
           placeholder="请输入学校名称"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item
-        label="学院名称（查询学校后根据学院id显示查询）"
-        prop="studentNo"
-      >
+
+      <el-form-item label="课程名称" prop="courseName">
         <el-input
-          v-model="queryParams.studentNo"
-          placeholder="请输入学院名称"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item
-        label="任课教师（查询学院后根据老师id显示查询）"
-        prop="studentNo"
-      >
-        <el-input
-          v-model="queryParams.studentNo"
-          placeholder="请输入任课教师名称"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="课程id(预留名称列表)" prop="courseWorkId">
-        <el-input
-          v-model="queryParams.courseWorkId"
+          v-model="queryParams.courseName"
           placeholder="请输入课程名称"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="课程作业id(预留名称列表)" prop="courseWorkId">
+      <el-form-item label="章节名称" prop="taskName">
         <el-input
-          v-model="queryParams.courseWorkId"
-          placeholder="请输入课程作业名称"
+          v-model="queryParams.taskName"
+          placeholder="请输入章节名称"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="学生学号" prop="studentNo">
+
+      <el-form-item label="学生姓名" prop="nickName">
         <el-input
-          v-model="queryParams.studentNo"
-          placeholder="请输入学生学号"
+          v-model="queryParams.nickName"
+          placeholder="请输入学生姓名"
           clearable
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item> -->
+      </el-form-item>
+      <el-form-item label="作业/考核状态" prop="workStatus">
+        <el-select
+          v-model="queryParams.workStatus"
+          placeholder="作业/考核状态"
+          clearable
+          style="width: 220px"
+        >
+          <el-option
+            v-for="dict in timeList"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="完成状态" prop="finishStatus">
         <el-select
           v-model="queryParams.finishStatus"
@@ -80,7 +72,7 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="识别状态" prop="identificationStatus">
+      <!-- <el-form-item label="识别状态" prop="identificationStatus">
         <el-select
           v-model="queryParams.identificationStatus"
           placeholder="识别状态"
@@ -94,7 +86,7 @@
             :value="dict.value"
           />
         </el-select>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item>
         <el-button
           type="primary"
@@ -133,7 +125,7 @@
           >修改</el-button
         >
       </el-col>
-      <el-col :span="1.5">
+      <!-- <el-col :span="1.5">
         <el-button
           type="danger"
           plain
@@ -144,7 +136,7 @@
           v-hasPermi="['studentwork:studentwork:remove']"
           >删除</el-button
         >
-      </el-col>
+      </el-col> -->
       <!-- <el-col :span="1.5">
         <el-button
           type="warning"
@@ -161,18 +153,22 @@
         @queryTable="getList"
       ></right-toolbar>
     </el-row>
-
+    <!-- 查询类型 -->
+    <el-radio-group v-model="taskType" @change="getList()">
+      <el-radio border :label="0">学生作业（视频）</el-radio>
+      <el-radio border :label="1">学生考核（视频）</el-radio>
+    </el-radio-group>
     <el-table
       v-loading="loading"
       :data="studentworkList"
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="学生作业id" align="center" prop="id" />
-      <el-table-column label="课程id" align="center" prop="courseId" />
-      <el-table-column label="课程作业id" align="center" prop="courseWorkId" />
-      <el-table-column label="任课教师id" align="center" prop="teacherId" />
-      <el-table-column label="学生id" align="center" prop="studentId" />
+      <el-table-column label="id" align="center" prop="id" />
+      <el-table-column label="学校名称" align="center" prop="schoolName" />
+      <el-table-column label="课程名称" align="center" prop="courseName" />
+      <el-table-column label="章节名称" align="center" prop="taskName" />
+      <el-table-column label="学生名称" align="center" prop="nickName" />
       <el-table-column label="视频地址" align="center" prop="workVideo">
         <template slot-scope="scope">
           <video
@@ -182,24 +178,6 @@
             :controls="false"
           ></video> </template
       ></el-table-column>
-      <!-- <el-table-column
-        label="学生作业json"
-        align="center"
-        prop="demonstrationVideo"
-      /> -->
-      <el-table-column label="作业成绩" align="center" prop="workScore" />
-      <el-table-column label="作业建议" align="center" prop="wordSuggest" />
-      <!-- <el-table-column label="文件识别码" align="center" prop="fileMd5" /> -->
-      <!-- <el-table-column
-        label="${comment}"
-        align="center"
-        prop="creatTime"
-        width="180"
-      >
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.creatTime, '{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column> -->
       <el-table-column label="完成状态" align="center" prop="finishStatus">
         <template slot-scope="scope">
           <span
@@ -214,25 +192,32 @@
           >
         </template>
       </el-table-column>
-      <el-table-column
-        label="识别状态"
-        align="center"
-        prop="identificationStatus"
-        ><template slot-scope="scope">
+      <el-table-column label="作业/考核状态" align="center" prop="finishStatus">
+        <template slot-scope="scope">
           <span
-            v-if="scope.row.identificationStatus === '1'"
+            v-if="scope.row.finishStatus === '1'"
             style="color: rgba(255, 0, 0, 0.658)"
-            >正在识别</span
+            >未完成</span
           >
           <span
-            v-else-if="scope.row.identificationStatus === '2'"
+            v-else-if="scope.row.finishStatus === '2'"
             style="color: rgb(44, 190, 44)"
-            >已识别</span
+            >已完成</span
           >
-        </template></el-table-column
-      >
-      <!-- <el-table-column label="类型" align="center" prop="type" /> -->
-      <el-table-column label="总时长(秒)" align="center" prop="allTime" />
+        </template>
+      </el-table-column>
+      <el-table-column label="作业成绩" align="center" prop="workScore">
+        <template slot-scope="scope">
+          {{
+            scope.row.workScore === -1
+              ? '成绩生成中'
+              : scope.row.workScore === -2
+              ? '成绩生成失败'
+              : scope.row.workScore
+          }}
+        </template>
+      </el-table-column>
+      <!-- <el-table-column label="作业建议" align="center" prop="wordSuggest" /> -->
       <el-table-column
         label="操作"
         align="center"
@@ -247,14 +232,14 @@
             v-hasPermi="['studentwork:studentwork:edit']"
             >修改</el-button
           >
-          <el-button
+          <!-- <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['studentwork:studentwork:remove']"
             >删除</el-button
-          >
+          > -->
         </template>
       </el-table-column>
     </el-table>
@@ -270,145 +255,15 @@
     <!-- 添加或修改学生作业记录对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="90px">
-        <el-form-item v-if="form.id" label="学生作业id" prop="courseWorkId">
-          <el-input
-            v-model="form.id"
-            placeholder="请输入学生作业id"
-            :disabled="title == '添加学生作业记录' ? false : true"
-          />
-        </el-form-item>
-        <el-form-item label="课程id" prop="courseId">
-          <el-input
-            v-model="form.courseId"
-            placeholder="请输入课程id"
-            :disabled="title == '添加学生作业记录' ? false : true"
-          />
-        </el-form-item>
-        <el-form-item label="课程作业id" prop="courseWorkId">
-          <el-input
-            v-model="form.courseWorkId"
-            placeholder="请输入课程作业id"
-            :disabled="title == '添加学生作业记录' ? false : true"
-          />
-        </el-form-item>
-        <el-form-item label="任课教师id" prop="teacherId">
-          <el-input
-            v-model="form.teacherId"
-            placeholder="请输入任课教师id"
-            :disabled="title == '添加学生作业记录' ? false : true"
-          />
-        </el-form-item>
-        <el-form-item label="学生id" prop="studentId">
-          <el-input
-            v-model="form.studentId"
-            placeholder="请输入学生id"
-            :disabled="title == '添加学生作业记录' ? false : true"
-          />
-        </el-form-item>
-        <el-form-item label="作业视频" prop="workVideo">
-          <div style="display: flex">
-            <video
-              v-if="form.workVideo"
-              :src="form.workVideo"
-              width="80%"
-              height="auto"
-              :controls="true"
-              ref="videoRef"
-              @loadedmetadata="handleLoadedMetadata"
-            ></video>
-            <div
-              style="
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                width: 20%;
-              "
-            >
-              <!-- <div v-if="form.workVideo" class="avatar-uploader" @click="bigVideo">
-                <i class="el-icon-plus avatar-uploader-icon">放大</i>
-              </div> -->
-              <el-upload
-                class="avatar-uploader"
-                :action="uploadUrl"
-                :on-success="handleVideoSuccess"
-                :before-upload="beforeVideoUpload"
-                accept="video/*"
-                :limit="1"
-                :headers="headers"
-                :show-file-list="false"
-              >
-                <i class="el-icon-refresh avatar-uploader-icon">{{
-                  form.workVideo ? '更换' : '上传'
-                }}</i>
-              </el-upload>
-            </div>
-          </div>
-        </el-form-item>
-        <!-- <el-form-item label="视频json" prop="demonstrationVideo">
-          <el-input
-            v-model="form.demonstrationVideo"
-            placeholder="请输入视频json"
-          />
-        </el-form-item> -->
         <el-form-item label="作业成绩" prop="workScore">
-          <el-input v-model="form.workScore" placeholder="请输入作业分数" />
-        </el-form-item>
-        <el-form-item label="作业建议" prop="wordSuggest">
-          <el-input v-model="form.wordSuggest" placeholder="请输入作业建议" />
-        </el-form-item>
-        <!-- <el-form-item label="文件识别码" prop="fileMd5">
-          <el-input v-model="form.fileMd5" placeholder="请输入文件识别码" />
-        </el-form-item> -->
-        <!-- <el-form-item label="${comment}" prop="creatTime">
-          <el-date-picker
-            clearable
-            v-model="form.creatTime"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="请选择${comment}"
-          >
-          </el-date-picker>
-        </el-form-item> -->
-        <el-form-item label="完成状态" prop="finishStatus">
-          <el-select
-            v-model="form.finishStatus"
-            placeholder="完成状态"
-            clearable
-            style="width: 220px"
-            :disabled="title == '添加学生作业记录' ? false : true"
-          >
-            <el-option
-              v-for="dict in finishList"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="识别状态" prop="identificationStatus">
-          <el-select
-            v-model="form.identificationStatus"
-            placeholder="识别状态"
-            clearable
-            style="width: 220px"
-            :disabled="title == '添加学生作业记录' ? false : true"
-          >
-            <el-option
-              v-for="dict in identificationList"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
-            />
-          </el-select>
-        </el-form-item>
-        <!-- <el-form-item label="类型" prop="type">
-          <el-input v-model="form.type" placeholder="请输入类型" />
-        </el-form-item> -->
-        <!-- <el-form-item label="总时长" prop="allTime">
           <el-input
-            v-model="form.allTime"
-            placeholder="请输入总时长"
+            v-model="form.workScore"
+            :disabled="form.workScore === -1"
+            placeholder="请输入作业分数"
           />
+        </el-form-item>
+        <!-- <el-form-item label="作业建议" prop="wordSuggest">
+          <el-input v-model="form.wordSuggest" placeholder="请输入作业建议" />
         </el-form-item> -->
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -433,6 +288,7 @@ export default {
   name: 'homework',
   data() {
     return {
+      taskType: 0,
       // 遮罩层
       loading: true,
       // 选中数组
@@ -455,10 +311,13 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        studentNo: '',
+        schoolName: '',
+        courseName: '',
+        nickName: '',
         finishStatus: '',
+        workStatus: '',
         identificationStatus: '',
-        courseWorkId: ''
+        taskName: ''
       },
       // 表单参数
       form: {},
@@ -467,6 +326,11 @@ export default {
       finishList: [
         { value: '1', label: '未完成' },
         { value: '2', label: '已完成' }
+      ],
+      timeList: [
+        { value: '0', label: '未完成' },
+        { value: '1', label: '进行中' },
+        { value: '2', label: '结束' }
       ],
       identificationList: [
         { value: '1', label: '正在识别' },
@@ -509,7 +373,7 @@ export default {
     /** 查询学生作业记录列表 */
     getList() {
       this.loading = true
-      listStudentwork(this.queryParams).then((response) => {
+      listStudentwork(this.taskType, this.queryParams).then((response) => {
         this.studentworkList = response.rows
         this.total = response.total
         this.loading = false
@@ -630,5 +494,10 @@ export default {
   border-radius: 6px;
   cursor: pointer;
   margin-bottom: 10px;
+}
+::v-deep .el-radio-group {
+  display: block;
+  text-align: center;
+  margin: 20px auto;
 }
 </style>
