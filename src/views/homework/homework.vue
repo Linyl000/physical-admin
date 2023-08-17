@@ -155,8 +155,8 @@
     </el-row>
     <!-- 查询类型 -->
     <el-radio-group v-model="taskType" @change="getList()">
-      <el-radio border :label="0">学生作业（视频）</el-radio>
-      <el-radio border :label="1">学生考核（视频）</el-radio>
+      <el-radio border :label="0">学生作业</el-radio>
+      <el-radio border :label="1">学生考核</el-radio>
     </el-radio-group>
     <el-table
       v-loading="loading"
@@ -373,11 +373,13 @@ export default {
     /** 查询学生作业记录列表 */
     getList() {
       this.loading = true
-      listStudentwork(this.taskType, this.queryParams).then((response) => {
-        this.studentworkList = response.rows
-        this.total = response.total
-        this.loading = false
-      })
+      listStudentwork({ taskType: this.taskType, ...this.queryParams }).then(
+        (response) => {
+          this.studentworkList = response.rows
+          this.total = response.total
+          this.loading = false
+        }
+      )
     },
     // 取消按钮
     cancel() {
