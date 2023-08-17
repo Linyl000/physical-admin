@@ -86,7 +86,7 @@
       <el-table-column label="学号" align="center" prop="studentNo" />
       <el-table-column label="学校名称" align="center" prop="schoolName" />
       <el-table-column label="课程名称" align="center" prop="courseName" />
-      <el-table-column label="课程编号" align="center" prop="teacherName" />
+      <el-table-column label="教师名称" align="center" prop="teacherName" />
       <el-table-column label="课程编号" align="center" prop="courseNo" />
       <el-table-column label="学期" align="center" prop="semesterId" />
 
@@ -192,7 +192,7 @@ export default {
         semesterId: null,
       },
       // 表单参数
-      uploadUrl: service.ip + "/common/upload",
+      uploadUrl: service.ip + "/api/work/stuCourceSester/importTemplate",
       // 表单校验
       rules: {},
       headers: { Authorization: "Bearer " + getToken() },

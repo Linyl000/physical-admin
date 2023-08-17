@@ -110,8 +110,6 @@
         <el-table-column label="试卷名称" align="center" prop="name" />
         <el-table-column label="课程名" align="center" prop="courseName" />
         <el-table-column label="课程类型" align="center" prop="courseType"/>
-        <el-table-column label="开始时间" align="center" prop="beginTime" />
-        <el-table-column label="结束时间" align="center" prop="endTime" />
         <el-table-column label="每题分值" align="center" prop="titleScore" />
         <el-table-column label="教师名称" align="center" prop="teacherName" />
 
@@ -149,7 +147,7 @@
           <el-form-item label="试卷标题" prop="name">
             <el-input v-model="form.name" placeholder="请输入课程编号" />
           </el-form-item>
-          <el-form-item label="试卷开始时间" prop="beginTime">
+          <!-- <el-form-item label="试卷开始时间" prop="beginTime">
             <el-date-picker
               v-model="form.beginTime"
               style="width: 100%;"
@@ -166,7 +164,7 @@
               placeholder="选择日期时间"
             >
             </el-date-picker>
-          </el-form-item>
+          </el-form-item> -->
            <el-form-item label="每题得分" prop="titleScore">
           <el-input v-model="form.titleScore" />
           </el-form-item>
@@ -218,20 +216,6 @@
           taskName: [
             { required: true, message: "任务名被你为空", trigger: "blur" },
           ],
-          beginTime: [
-          {
-              required: true,
-              message: "请选择结束时间",
-              trigger: ["blur", "change"],
-            },
-          ],
-          endTime: [
-            {
-              required: true,
-              message: "请选择结束时间",
-              trigger: ["blur", "change"],
-            },
-          ],
           titleScore: [
             { required: true, message: "任务名被你为空", trigger: "blur" },
           ],
@@ -243,15 +227,11 @@
         open: false,
         form: {
             name: null,
-            beginTime: null,
-            endTime: null,
             titleScore: null,
             passScore: null,
         },
         tempform: {
             name: null,
-            beginTime: null,
-            endTime: null,
             titleScore: null,
             passScore: null,
         },
@@ -278,8 +258,6 @@
         );
       },
       submitForm(){
-        this.form.beginTime=parse(this.form.beginTime)
-        this.form.endTime=parse(this.form.endTime)
         if(this.title=='新建试卷'){
             addExampaper(this.form).then(()=>{
                  this.getList()
