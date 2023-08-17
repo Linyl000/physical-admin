@@ -399,13 +399,9 @@
               ></el-input> </el-form-item
           ></el-col>
           <el-col :span="12">
-            <el-form-item
-              v-if="form.userId == undefined"
-              label="姓名"
-              prop="userName"
-            >
+            <el-form-item label="姓名" prop="nickName">
               <el-input
-                v-model="form.userName"
+                v-model="form.nickName"
                 placeholder="请输入姓名"
                 maxlength="30"
               />
