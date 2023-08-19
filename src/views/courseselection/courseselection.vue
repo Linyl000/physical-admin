@@ -192,7 +192,7 @@ export default {
         semesterId: null,
       },
       // 表单参数
-      uploadUrl: service.ip + "/api/work/stuCourceSester/importTemplate",
+      uploadUrl: service.ip + "/api/work/stuCourceSester/importData",
       // 表单校验
       rules: {},
       headers: { Authorization: "Bearer " + getToken() },
