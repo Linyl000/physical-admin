@@ -42,10 +42,14 @@
       <el-col :span="1.5">
         <el-upload
           class="avatar-uploader"
+          ref="upload"
           :action="uploadUrl"
+          :before-upload="clearList"
           :on-success="handleTempSuccess"
-          :limit="1"
           :headers="headers"
+          :show-file-list="false"
+          :on-error="handleTempError"
+          :on-change="chage"
         >
           <el-button
             type="primary"
@@ -287,6 +291,10 @@ export default {
         }
       });
     },
+
+    clearList(){
+    //  this.$refs.upload.clearFiles()
+    },
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
@@ -303,9 +311,25 @@ export default {
     },
     /** 导出按钮操作 */
 
-    handleTempSuccess(e) {
-      this.$msgSuccess("上传成功");
+    handleTempSuccess({code}) {
+      if(code && code==200){
+        this.$message({
+          message: '导入成功',
+          type: 'success'
+        });
       this.getList();
+      }else{
+        this.$message({
+          message: '导入失败',
+          type: 'error'
+        });
+      }
+    },
+    handleTempError(e) {
+      this.$message({
+          message: '导入失败',
+          type: 'error'
+        });
     },
   },
 };
