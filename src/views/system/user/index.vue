@@ -233,8 +233,8 @@
           <el-table-column
             label="姓名"
             align="center"
-            key="userName"
-            prop="userName"
+            key="nickName"
+            prop="nickName"
             v-if="columns[1].visible"
             :show-overflow-tooltip="true"
           />
@@ -597,7 +597,7 @@ export default {
         // 设置上传的请求头部
         headers: { Authorization: 'Bearer ' + getToken() },
         // 上传的地址
-        url: service.ip + '/common/upload'
+        url: service.ip + '/system/user/importData'
       },
       // 查询参数
       queryParams: {

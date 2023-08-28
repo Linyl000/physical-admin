@@ -195,12 +195,14 @@
       <el-table-column label="作业/考核状态" align="center" prop="finishStatus">
         <template slot-scope="scope">
           <span
-            v-if="scope.row.finishStatus === '1'"
+            v-if="scope.row.finishStatus === '0'"
             style="color: rgba(255, 0, 0, 0.658)"
             >未完成</span
           >
           <span
-            v-else-if="scope.row.finishStatus === '2'"
+            v-else-if="
+              scope.row.finishStatus === '1' || scope.row.finishStatus === '2'
+            "
             style="color: rgb(44, 190, 44)"
             >已完成</span
           >
