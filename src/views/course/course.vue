@@ -122,11 +122,9 @@
       <el-table-column label="课程封面" align="center" prop="courseJson">
         <template slot-scope="scope">
           <img
-          style="display: inline-block;width: 100px;height: 100px;"
-            :src="scope.row.courseJson"
-          ></template
+            style="display: inline-block; width: 100px; height: 100px"
+            :src="scope.row.courseJson" /></template
       ></el-table-column>
-      <!-- <el-table-column label="课程Json" align="center" prop="courseJson" /> -->
       <el-table-column
         label="操作"
         align="center"
@@ -170,7 +168,7 @@
     />
 
     <!-- 添加或修改课程对话框 -->
-    <el-dialog :title="title" :visible.sync="open"  append-to-body>
+    <el-dialog :title="title" :visible.sync="open" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="课程编号" prop="courseNo">
           <el-input v-model="form.courseNo" placeholder="请输入课程编号" />
@@ -202,7 +200,7 @@
             <el-option
               v-for="dict in teacherList"
               :key="dict.teacherId"
-              :label="dict.userName"
+              :label="dict.nickName"
               :value="dict.teacherId"
             ></el-option>
           </el-select>
@@ -216,19 +214,19 @@
           />
         </el-form-item>
         <el-form-item label="课程封面" prop="courseJson">
-              <el-upload
-                class="avatar-uploader"
-                :action="uploadUrl"
-                :on-success="handleVideoSuccess"
-                :limit="1"
-                :headers="headers"
-                :file-list="fileList"
-                list-type="picture"
-              >
-                <el-button type="primary">{{
-                  form.courseJson ? '更换' : '上传'
-                }}</el-button>
-              </el-upload>   
+          <el-upload
+            class="avatar-uploader"
+            :action="uploadUrl"
+            :on-success="handleVideoSuccess"
+            :limit="1"
+            :headers="headers"
+            :file-list="fileList"
+            list-type="picture"
+          >
+            <el-button type="primary">{{
+              form.courseJson ? '更换' : '上传'
+            }}</el-button>
+          </el-upload>
         </el-form-item>
         <!-- <el-form-item label="课程Json" prop="courseJson">
           <el-input
@@ -290,7 +288,7 @@ export default {
         courseName: null,
         teacherName: null
       },
-      fileList:[],
+      fileList: [],
       // 表单参数
       form: {},
       // 表单校验
@@ -368,7 +366,7 @@ export default {
     //   return isVideo && isLt200M
     // },
     bigVideo() {},
-    beforeUpload(){
+    beforeUpload() {
       // this.fileList>0 && (this.fileList)
     },
     /** 查询课程列表 */
@@ -458,7 +456,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       // console.log(row,'row')
-      const ids = row.courseId|| this.ids
+      const ids = row.courseId || this.ids
       this.$modal
         .confirm('是否确认删除课程吗？')
         .then(function () {

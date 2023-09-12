@@ -98,7 +98,7 @@ export const constantRoutes = [
         path: 'section',
         component: () => import('@/views/course/section/section.vue'),
         name: 'section',
-        meta: { title: '个人中心', icon: 'user' }
+        meta: { title: '课程章节', icon: 'user' }
       }
     ]
   }
