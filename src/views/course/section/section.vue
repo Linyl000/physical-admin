@@ -114,16 +114,16 @@
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="任务名称" align="center" prop="taskName" />
+      <el-table-column label="任务类型" align="center" prop="courseType">
+        <template slot-scope="scope">
+          {{ scope.row.courseType == '0' ? '测试' : '期末' }}
+        </template>
+      </el-table-column>
       <!-- <el-table-column label="课程名称" align="center" prop="courseName" /> -->
       <el-table-column label="文字描述" align="center" prop="taskDetails" />
       <!-- <el-table-column label="任务类型" align="center" prop="taskType">
         <template slot-scope="scope">
           {{ scope.row.taskType == '0' ? '作业' : '考试' }}
-        </template>
-      </el-table-column> -->
-      <!-- <el-table-column label="任务类型" align="center" prop="courseType">
-        <template slot-scope="scope">
-          {{ scope.row.courseType == '0' ? '理论' : '视频' }}
         </template>
       </el-table-column> -->
       <el-table-column label="章节视频" align="center">
@@ -132,7 +132,7 @@
           <div v-else>无</div>
         </template>
       </el-table-column>
-      <el-table-column label="关联试卷" align="center" prop="testPaper" />
+      <el-table-column label="关联试卷" align="center" prop="examPaperName" />
       <el-table-column label="开始时间" align="center" prop="startTime" />
       <el-table-column label="结束时间" align="center" prop="endTime" />
       <el-table-column
@@ -176,19 +176,19 @@
         <el-form-item label="文字描述" prop="taskDetails">
           <el-input v-model="form.taskDetails" placeholder="请输入文字描述" />
         </el-form-item>
-        <!-- <el-form-item label="任务类型" prop="taskType">
-          <el-select
-            v-model="form.taskType"
-            style="width: 100%"
-            placeholder="选择课程类型"
-          >
-            <el-option :key="0" label="作业" value="0"></el-option>
-            <el-option :key="1" label="考试" value="1"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="课程类型" prop="courseType">
+        <el-form-item label="任务类型" prop="courseType">
           <el-select
             v-model="form.courseType"
+            style="width: 100%"
+            placeholder="选择任务类型"
+          >
+            <el-option :key="0" label="测试" value="0"></el-option>
+            <el-option :key="1" label="期末" value="1"></el-option>
+          </el-select>
+        </el-form-item>
+        <!--   <el-form-item label="课程类型" prop="taskType">
+          <el-select
+            v-model="form.taskType"
             style="width: 100%"
             placeholder="选择课程类型"
           >
@@ -236,17 +236,17 @@
             </div>
           </div>
         </el-form-item>
-        <el-form-item label="关联试卷" prop="testPaperld">
+        <el-form-item label="关联试卷" prop="examPaperId">
           <el-select
-            v-model="form.testPaperld"
+            v-model="form.examPaperId"
             filterable
             placeholder="选择关联试卷"
           >
             <el-option
-              v-for="dict in testPaperList"
-              :key="dict.testPaperld"
-              :label="dict.testPaper"
-              :value="dict.testPaperld"
+              v-for="dict in testList"
+              :key="dict.id"
+              :label="dict.name"
+              :value="dict.id"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -305,7 +305,6 @@ export default {
       taskList: [],
       showSearch: true,
       multiple: false,
-      testPaperList: [],
       rules: {
         taskName: [
           { required: true, message: '任务名称不能为空', trigger: 'blur' }
@@ -369,7 +368,7 @@ export default {
       this.form.courseVideo = r.url
     },
     getTaskList() {
-      getExamList({ courseId: this.courseId }).then((res) => {
+      getExamList({ pageNum: 1, pageSize: 10000 }).then((res) => {
         this.testList = res.rows
       })
     },
@@ -407,7 +406,7 @@ export default {
         taskName: null,
         taskDetails: null,
         courseVideo: null,
-        testPaperId: null,
+        examPaperId: null,
         startTime: null,
         endTime: null
       }
