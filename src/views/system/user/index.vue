@@ -35,7 +35,7 @@
           size="small"
           :inline="true"
           v-show="showSearch"
-          label-width="68px"
+          label-width="75px"
         >
           <el-form-item label="角色身份" prop="roleId">
             <el-select
@@ -51,9 +51,18 @@
               ></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="姓名" prop="userName">
+          <el-form-item label="学号/工号" prop="userName">
             <el-input
               v-model="queryParams.userName"
+              placeholder="请输入学号/工号"
+              clearable
+              style="width: 240px"
+              @keyup.enter.native="handleQuery"
+            />
+          </el-form-item>
+          <el-form-item label="姓名" prop="nickName">
+            <el-input
+              v-model="queryParams.nickName"
               placeholder="请输入姓名"
               clearable
               style="width: 240px"
