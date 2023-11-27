@@ -8,27 +8,36 @@
       v-show="showSearch"
       label-width="100px"
     >
-      <el-form-item label="学校名称" prop="schoolName">
+      <!-- <el-form-item label="学校名称" prop="schoolName">
+          <el-input
+            v-model="queryParams.schoolName"
+            placeholder="请输入学校名称"
+            clearable
+            @keyup.enter.native="handleQuery"
+          />
+        </el-form-item>
+  
+        <el-form-item label="课程名称" prop="courseName">
+          <el-input
+            v-model="queryParams.courseName"
+            placeholder="请输入课程名称"
+            clearable
+            @keyup.enter.native="handleQuery"
+          />
+        </el-form-item> -->
+      <el-form-item label="试卷名称" prop="taskName">
         <el-input
-          v-model="queryParams.schoolName"
-          placeholder="请输入学校名称"
+          v-model="queryParams.taskName"
+          placeholder="请输入试卷名称"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
 
-      <el-form-item label="课程名称" prop="courseName">
+      <el-form-item label="学号" prop="studentNo">
         <el-input
-          v-model="queryParams.courseName"
-          placeholder="请输入课程名称"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="章节名称" prop="taskName">
-        <el-input
-          v-model="queryParams.taskName"
-          placeholder="请输入章节名称"
+          v-model="queryParams.studentNo"
+          placeholder="请输入学生姓名"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -42,10 +51,10 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="作业/考核状态" prop="workStatus">
+      <el-form-item label="完成状态" prop="finishStatus">
         <el-select
-          v-model="queryParams.workStatus"
-          placeholder="作业/考核状态"
+          v-model="queryParams.finishStatus"
+          placeholder="完成状态"
           clearable
           style="width: 220px"
         >
@@ -57,36 +66,29 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="完成状态" prop="finishStatus">
-        <el-select
-          v-model="queryParams.finishStatus"
-          placeholder="完成状态"
+      <el-form-item label="成绩" prop="workScore">
+        <el-input
+          v-model="queryParams.workScore"
+          placeholder="请输入成绩"
           clearable
-          style="width: 220px"
-        >
-          <el-option
-            v-for="dict in finishList"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          />
-        </el-select>
+          @keyup.enter.native="handleQuery"
+        />
       </el-form-item>
       <!-- <el-form-item label="识别状态" prop="identificationStatus">
-        <el-select
-          v-model="queryParams.identificationStatus"
-          placeholder="识别状态"
-          clearable
-          style="width: 220px"
-        >
-          <el-option
-            v-for="dict in identificationList"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          />
-        </el-select>
-      </el-form-item> -->
+          <el-select
+            v-model="queryParams.identificationStatus"
+            placeholder="识别状态"
+            clearable
+            style="width: 220px"
+          >
+            <el-option
+              v-for="dict in identificationList"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            />
+          </el-select>
+        </el-form-item> -->
       <el-form-item>
         <el-button
           type="primary"
@@ -103,16 +105,16 @@
 
     <el-row :gutter="10" class="mb8">
       <!-- <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['studentwork:studentwork:add']"
-          >新增</el-button
-        >
-      </el-col> -->
+          <el-button
+            type="primary"
+            plain
+            icon="el-icon-plus"
+            size="mini"
+            @click="handleAdd"
+            v-hasPermi="['studentwork:studentwork:add']"
+            >新增</el-button
+          >
+        </el-col> -->
       <el-col :span="1.5">
         <el-button
           type="success"
@@ -126,28 +128,28 @@
         >
       </el-col>
       <!-- <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['studentwork:studentwork:remove']"
-          >删除</el-button
-        >
-      </el-col> -->
+          <el-button
+            type="danger"
+            plain
+            icon="el-icon-delete"
+            size="mini"
+            :disabled="multiple"
+            @click="handleDelete"
+            v-hasPermi="['studentwork:studentwork:remove']"
+            >删除</el-button
+          >
+        </el-col> -->
       <!-- <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          @click="handleExport"
-          v-hasPermi="['studentwork:studentwork:export']"
-          >导出</el-button
-        >
-      </el-col> -->
+          <el-button
+            type="warning"
+            plain
+            icon="el-icon-download"
+            size="mini"
+            @click="handleExport"
+            v-hasPermi="['studentwork:studentwork:export']"
+            >导出</el-button
+          >
+        </el-col> -->
       <right-toolbar
         :showSearch.sync="showSearch"
         @queryTable="getList"
@@ -156,7 +158,7 @@
     <!-- 查询类型 -->
     <el-radio-group v-model="taskType" @change="getList()">
       <el-radio border :label="0">学生作业</el-radio>
-      <el-radio border :label="1">学生考核</el-radio>
+      <el-radio border :label="1">学生期末作业</el-radio>
     </el-radio-group>
     <el-table
       v-loading="loading"
@@ -164,12 +166,12 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="id" align="center" prop="id" />
-      <el-table-column label="学校名称" align="center" prop="schoolName" />
-      <el-table-column label="课程名称" align="center" prop="courseName" />
-      <el-table-column label="章节名称" align="center" prop="taskName" />
+      <!-- <el-table-column label="id" align="center" prop="id" /> -->
+      <!-- <el-table-column label="学校名称" align="center" prop="schoolName" /> -->
+      <el-table-column label="试卷" align="center" prop="examPaperName" />
+      <el-table-column label="学号" align="center" prop="studentNo" />
       <el-table-column label="学生名称" align="center" prop="nickName" />
-      <el-table-column label="视频地址" align="center" prop="workVideo">
+      <!-- <el-table-column label="视频地址" align="center" prop="workVideo">
         <template slot-scope="scope">
           <video
             :src="scope.row.workVideo"
@@ -177,22 +179,8 @@
             height="auto"
             :controls="false"
           ></video> </template
-      ></el-table-column>
+      ></el-table-column> -->
       <el-table-column label="完成状态" align="center" prop="finishStatus">
-        <template slot-scope="scope">
-          <span
-            v-if="scope.row.finishStatus === '1'"
-            style="color: rgba(255, 0, 0, 0.658)"
-            >未完成</span
-          >
-          <span
-            v-else-if="scope.row.finishStatus === '2'"
-            style="color: rgb(44, 190, 44)"
-            >已完成</span
-          >
-        </template>
-      </el-table-column>
-      <el-table-column label="作业/考核状态" align="center" prop="finishStatus">
         <template slot-scope="scope">
           <span
             v-if="scope.row.finishStatus === '0'"
@@ -235,13 +223,13 @@
             >修改</el-button
           >
           <!-- <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
-            v-hasPermi="['studentwork:studentwork:remove']"
-            >删除</el-button
-          > -->
+              size="mini"
+              type="text"
+              icon="el-icon-delete"
+              @click="handleDelete(scope.row)"
+              v-hasPermi="['studentwork:studentwork:remove']"
+              >删除</el-button
+            > -->
         </template>
       </el-table-column>
     </el-table>
@@ -265,8 +253,8 @@
           />
         </el-form-item>
         <!-- <el-form-item label="作业建议" prop="wordSuggest">
-          <el-input v-model="form.wordSuggest" placeholder="请输入作业建议" />
-        </el-form-item> -->
+            <el-input v-model="form.wordSuggest" placeholder="请输入作业建议" />
+          </el-form-item> -->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -313,11 +301,12 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        schoolName: '',
+        studentNo: '',
         courseName: '',
         nickName: '',
         finishStatus: '',
         workStatus: '',
+        workScore: '',
         identificationStatus: '',
         taskName: ''
       },
@@ -326,13 +315,12 @@ export default {
       // 表单校验
       rules: {},
       finishList: [
-        { value: '1', label: '未完成' },
-        { value: '2', label: '已完成' }
+        { value: '-1', label: '正在解析' },
+        { value: '-2', label: '解析失败' }
       ],
       timeList: [
         { value: '0', label: '未完成' },
-        { value: '1', label: '进行中' },
-        { value: '2', label: '结束' }
+        { value: '1', label: '已完成' }
       ],
       identificationList: [
         { value: '1', label: '正在识别' },
