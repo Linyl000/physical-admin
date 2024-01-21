@@ -42,3 +42,11 @@ export function delStudentwork(userId) {
     method: 'delete'
   })
 }
+//重置成绩
+export function resetWorkScore(data) {
+  return request({
+    url: '/api/work/studentWork/resetWorkScore/' + data,
+    method: 'post',
+    data: data
+  })
+}

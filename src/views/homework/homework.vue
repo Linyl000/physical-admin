@@ -230,6 +230,13 @@
               v-hasPermi="['studentwork:studentwork:remove']"
               >删除</el-button
             > -->
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-refresh-left"
+            @click="handleRecord(scope.row)"
+            >重置</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -270,7 +277,8 @@ import {
   getStudentwork,
   delStudentwork,
   addStudentwork,
-  updateStudentwork
+  updateStudentwork,
+  resetWorkScore
 } from '@/api/homework/homework'
 import service from '@/utils/request.js'
 import { getToken } from '@/utils/auth'
@@ -450,6 +458,19 @@ export default {
           }
         }
       })
+    },
+    handleRecord(row) {
+      const ids = row.id
+      this.$modal
+        .confirm('是否确认重置学生作业记录编号为"' + ids + '"的数据项？')
+        .then(function () {
+          return resetWorkScore(ids)
+        })
+        .then(() => {
+          this.getList()
+          this.$modal.msgSuccess('重置成功')
+        })
+        .catch(() => {})
     },
     /** 删除按钮操作 */
     handleDelete(row) {
